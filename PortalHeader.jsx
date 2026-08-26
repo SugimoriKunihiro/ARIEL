@@ -41,7 +41,11 @@ function isEmbeddedInPortal() {
   }
 }
 
-export default function PortalHeader() {
+// `extra` = 灰色バーの右 (ユーザー情報 = メール + ログアウト の並び) に差し込む要素。
+// 🔴 ここに front 固有のコンポーネントを import しない — packages/portal は
+// WebUI と iOS front が共有する SSOT なので、**中身は呼び出し側 (App.jsx) が渡す**。
+// (2026-08-27 ひろくん指示「ダウンロードは灰色の SYLPHEED のヘッダーメニューの中」)
+export default function PortalHeader({ extra = null }) {
   const [openKey, setOpenKey] = useState(null)
   const [collapseOpen, setCollapseOpen] = useState(false) // ハンバーガー展開状態
   const [isNarrow, setIsNarrow] = useState(() => typeof window !== 'undefined' && window.innerWidth < BREAKPOINT)
@@ -211,6 +215,7 @@ export default function PortalHeader() {
       padding: isNarrow ? '4px 10px' : 0,
     }}>
       {userEmail && <span style={userEmailStyle}>{userEmail}</span>}
+      {extra}
       <button
         onClick={handleLogout}
         style={actionBtnStyle}
