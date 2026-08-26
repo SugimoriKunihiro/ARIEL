@@ -529,8 +529,14 @@
                `isEmbeddedInPortal()` で React の灰色バーごと描かれないので**二重には出ない**。
                🔴 <a href> にしない — ブラウザ自前の取得には Authorization が乗らず
                   認証を素通りする口になる (D-55)。fetch → blob で落とす。
-               🔴 スマホでは出さない — 落とすのは Windows 用の .ps1。 -->
+               🔴 スマホでは出さない — 落とすのは Windows 用の .ps1。
+               🔴 ラベルは **必ず `{{ installerLabel }}` を通す** — ここに文字や絵文字を
+                  直書きすると、状態 (⏳ / ✅ / ⚠️) が出なくなるのに
+                  `installerLabel === 'SSM'` の検査は緑のまま通ってしまう (2026-08-27 レイ指摘)。
+               🔴 aria-label は**固定文**。ラベルが文字/絵文字で入れ替わるので、
+                  読み上げは短い 'SSM' や '⏳' ではなく用途を言わせる。 -->
           <button v-if="installerVisible" class="action-btn" @click="downloadSsm3Installer"
+            aria-label="SSM3 (Beta) インストーラーをダウンロード" :aria-busy="installerBusy"
             :title="installerTitle">{{ installerLabel }}</button>
           <button class="action-btn" @click="logout">ログアウト</button>
         </div>
@@ -627,7 +633,10 @@
 
     // SSM3 (Beta) インストーラー配布 (SSM3-PLAN §12.1 / 追記5)
     var SSM3_INSTALLER_FILE = 'runclaude-ssm-setup.ps1';
-    var SSM3_INSTALLER_IDLE = '🛠️';
+    // 🔴 ラベルは **文字「SSM」**。ひろくん指示 2026-08-27
+    // 「シノの識別子じゃなくて別のアイコンか文字に」 — 🛠️ は GNOME (シノ) の識別子なので、
+    // 誰の識別子でもなく中身が分かる文字にした。忙しい/成功/失敗の一時表示は絵文字のまま。
+    var SSM3_INSTALLER_IDLE = 'SSM';
     var SSM3_INSTALLER_TITLE = 'SSM3 (Beta) インストーラーをダウンロード — Windows PC 用。\n'
       + 'PowerShell で: powershell -ExecutionPolicy Bypass -File .\\' + SSM3_INSTALLER_FILE;
 
